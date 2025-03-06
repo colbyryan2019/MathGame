@@ -11,7 +11,7 @@ struct ContentView: View {
     @State private var showNextButton: Bool = false
     @State private var score: ScoreTracker = ScoreTracker()
 
-    init(difficulty: Difficulty) {
+    init(difficulty: Difficulty, score: ScoreTracker) {
         self.difficulty = difficulty
         
         switch difficulty {

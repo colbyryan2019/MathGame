@@ -11,7 +11,7 @@ struct MenuView: View {
 
     var body: some View {
         VStack {
-            Text("Math Game")
+            Text("Mathematica")
                 .font(.largeTitle)
                 .padding()
 

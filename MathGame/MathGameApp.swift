@@ -11,7 +11,9 @@ import SwiftUI
 struct MathGameApp: App {
     var body: some Scene {
         WindowGroup {
-          MenuView()
+            NavigationView {
+                MenuView()
+            }
         }
     }
 }

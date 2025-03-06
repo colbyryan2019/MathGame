@@ -48,7 +48,7 @@ class ScoreTracker: ObservableObject {
         }
     }
     
-    private func loadScores() {
+    public func loadScores() {
         if let savedData = UserDefaults.standard.data(forKey: "ScoreTrackerData"),
            let decoded = try? JSONDecoder().decode([String: Score].self, from: savedData) {
             scores = decoded.mapKeys { Difficulty(rawValue: $0) ?? .easy } // Convert string keys back to Difficulty
