@@ -11,6 +11,9 @@ struct ContentView: View {
     @State private var showNextButton: Bool = false
     @State private var score: ScoreTracker = ScoreTracker()
 
+    @Environment(\.presentationMode) var presentationMode // For dismissing view
+
+    
     init(difficulty: Difficulty, score: ScoreTracker) {
         self.difficulty = difficulty
         
@@ -31,13 +34,46 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
+            /*Button(action: {
+                presentationMode.wrappedValue.dismiss() // Navigate back
+            }) {
+                HStack {
+                    Image(systemName: "house.fill") // House icon
+                        .font(.title2)
+                    Text("Menu")
+                        .font(.headline)
+                        .padding(.leading, 5)
+                }
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(12)
+                .shadow(radius: 3)
+            }
+            .padding(.top, 10)
+            .padding(.horizontal)*/
+        }
+        
+        .navigationBarBackButtonHidden(true) // This hides the default back button
+                    .navigationBarItems(leading: Button(action: {
+                        // Custom back action: Dismiss the current view (navigate back)
+                        self.presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Image(systemName: "arrow.left.circle.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.blue)
+                    })
+        
+        VStack {
             HStack {
                 Text("\(score.getWins(for: difficulty))")
                     .font(.headline)
                     .foregroundColor(.green)
                     .padding(.leading)
                 Spacer()
-                Text("Losses: \(score.getLosses(for: difficulty))")
+                Text("\(score.getLosses(for: difficulty))")
                     .font(.headline)
                     .foregroundColor(.red)
                     .padding(.trailing)
@@ -95,13 +131,14 @@ struct ContentView: View {
                 }
             }
 
-            // Check and Next Game buttons
-            Button(action: checkAnswer) {
-                Text("Check")
-                    .padding()
-                    .background(Color.green)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+            if !showNextButton {
+                Button(action: checkAnswer) {
+                    Text("Check")
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
             }
 
             if showNextButton {
