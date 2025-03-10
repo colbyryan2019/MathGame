@@ -15,19 +15,27 @@ struct MathGame {
     init(numberOfNumbers: Int = 3, range: ClosedRange<Int> = 2...12) {
         // Generate numbers and operations
         targetNumber = -1
-        repeat{
+        repeat {
             numbers = (1...numberOfNumbers).map { _ in Int.random(in: range) }
-            operations = ["+", "-", "*"].shuffled().prefix(numberOfNumbers - 1).map { $0 }
+            
+            // Generate operations randomly (numberOfNumbers - 1 operations)
+            operations = (1...(numberOfNumbers - 1)).map { _ in
+                ["+", "-", "*"].randomElement()!
+            }
             
             // Generate a target number based on the operations and numbers
-            
             targetNumber = MathGame.calculateTargetWithOrder(numbers: numbers, operations: operations)
             numbers.shuffle()
-        }while(targetNumber < 0)
+        } while(targetNumber < 0)
+        
         print("gamelogic init")
+        print("target number:", targetNumber)
+        print("numbers=", numbers)
+        print("operations: ", operations)
+        
     }
     
-    //Old function calculates left to right, ignoring order of operations. Didn't delete, could be useful in some gamemodes?
+    // Function to calculate target with left-to-right operations (basic mode)
     static func calculateTarget(numbers: [Int], operations: [String]) -> Int {
         var result = numbers[0]
         for (index, operation) in operations.enumerated() {
@@ -46,35 +54,51 @@ struct MathGame {
         return result
     }
     
-    // Static method to calculate result with order of operations
+    // Static method to calculate result with order of operations (PEMDAS)
     static func calculateTargetWithOrder(numbers: [Int], operations: [String]) -> Int {
-        var expression = zip(numbers, operations + [""]).flatMap { [$0.0, $0.1] }
+        var expression: [Any] = []
         
-        // Handle *, / first
-        var index = 1
-        while index < expression.count - 1 {
-            if let op = expression[index] as? String, op == "*" || op == "/" {
-                let left = expression[index - 1] as! Int
-                let right = expression[index + 1] as! Int
-                let result = op == "*" ? left * right : (right != 0 ? left / right : left) // Prevent divide by 0
-                expression.replaceSubrange(index - 1...index + 1, with: [result])
-                index -= 1
+        // Interleave numbers and operations into an array
+        for (i, num) in numbers.enumerated() {
+            expression.append(num)
+            if i < operations.count {
+                expression.append(operations[i])
             }
-            index += 2
         }
         
-        // Handle +, - next
-        var result = expression[0] as! Int
-        index = 1
-        while index < expression.count - 1 {
-            if let op = expression[index] as? String {
+        // **First pass: Handle Multiplication**
+        var newExpression: [Any] = []
+        var index = 0
+        
+        while index < expression.count {
+            if let op = expression[index] as? String, op == "*" {
+                let left = newExpression.removeLast() as! Int
                 let right = expression[index + 1] as! Int
-                result = op == "+" ? result + right : result - right
+                newExpression.append(left * right)
+                index += 2
+            } else {
+                newExpression.append(expression[index])
+                index += 1
             }
+        }
+        
+        // **Second pass: Handle Addition and Subtraction**
+        var result = newExpression[0] as! Int
+        index = 1
+        
+        while index < newExpression.count {
+            let op = newExpression[index] as! String
+            let right = newExpression[index + 1] as! Int
+            
+            if op == "+" {
+                result += right
+            } else if op == "-" {
+                result -= right
+            }
+            
             index += 2
         }
         
         return result
     }
-    
 }

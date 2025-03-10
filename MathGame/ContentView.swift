@@ -84,8 +84,15 @@ struct ContentView: View {
                 .font(.headline)
                 .padding()
         }
-    
         VStack(spacing: 20) {
+            
+            // Target number moved above the equation
+            Text("Target: \(game.targetNumber)")
+                .font(.largeTitle)
+                .fontWeight(.bold)
+                .foregroundColor(.blue)
+                .padding(.bottom, 10) // Add spacing below target number
+            
             // Display blanks and operations
             HStack(spacing: 10) {
                 ForEach(0..<numOfInputs, id: \.self) { index in
@@ -106,14 +113,13 @@ struct ContentView: View {
                     }
 
                     if index < numOfInputs - 1 {
+                        //update the text size for hard mode to be slightly smaller otherwise they don't fit
                         Text(game.operations[index])
-                            .font(.title)
+                            .font(difficulty == .hard ? .title2 : .title)
                     }
                 }
-                Text("= \(game.targetNumber)")
-                    .font(.title)
             }
-
+            
             // Number buttons
             HStack(spacing: 15) {
                 ForEach(game.numbers.indices, id: \.self) { index in
