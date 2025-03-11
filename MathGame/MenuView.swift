@@ -11,6 +11,7 @@ struct MenuView: View {
     
     var body: some View {
         ZStack{
+            Color.black.edgesIgnoringSafeArea(.all) // Set background to black
             FloatingSymbolView()
             
             VStack {
@@ -54,6 +55,6 @@ struct MenuView: View {
             .onAppear {
                 score.loadScores()
             }
-        }.edgesIgnoringSafeArea(.all)
+        }
     }
 }
