@@ -65,7 +65,7 @@ struct ContentView: View {
                 
 
             
-            VStack(spacing: 35) {
+            VStack(spacing: 20) {
                 
                 // Target number moved above the equation
                 Text("Target: \(game.targetNumber)")
@@ -97,6 +97,8 @@ struct ContentView: View {
                             //update the text size for hard mode to be slightly smaller otherwise they don't fit
                             Text(game.operations[index])
                                 .font(difficulty == .hard ? .headline : .title)
+                                .foregroundColor(.white) // Make operations blue for visibility
+                                
                         }
                     }
                 }
