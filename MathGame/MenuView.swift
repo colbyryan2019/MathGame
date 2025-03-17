@@ -8,10 +8,14 @@ import SwiftUI
 
 struct MenuView: View {
     @ObservedObject var score = ScoreTracker() // Ensure this is observed
+    @State private var showSettings = false    // Add this State variable
+    @EnvironmentObject var settings: AppSettings
     
     var body: some View {
         ZStack{
-            Color.black.edgesIgnoringSafeArea(.all) // Set background to black
+            (settings.isDarkMode ? Color.black : Color.white)
+                .edgesIgnoringSafeArea(.all)
+
             FloatingSymbolView()
             
             VStack {
@@ -28,7 +32,7 @@ struct MenuView: View {
                 
                 VStack(spacing: 15) {
                     ForEach(Difficulty.allCases, id: \.self) { difficulty in
-                        NavigationLink(destination: ContentView(difficulty: difficulty, score: score)) {
+                        NavigationLink(destination: ContentView(difficulty: difficulty, score: score).environmentObject(settings)) {
                             HStack {
                                 Text(difficulty.rawValue)
                                     .font(.headline)
@@ -51,6 +55,17 @@ struct MenuView: View {
                         }
                     }
                 }
+                .navigationBarTitle("", displayMode: .inline) // Optional: remove default title
+                    .navigationBarItems(trailing: Button(action: {
+                        showSettings.toggle()
+                    }) {
+                        Image(systemName: "gearshape.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                    })
+                    .sheet(isPresented: $showSettings) {
+                        SettingsView()
+                    }
             }
             .onAppear {
                 score.loadScores()

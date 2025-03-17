@@ -11,6 +11,8 @@ struct ContentView: View {
     @State private var showNextButton: Bool = false
     @State private var score: ScoreTracker = ScoreTracker()
 
+    @EnvironmentObject var settings: AppSettings
+
     @Environment(\.presentationMode) var presentationMode // For dismissing view
 
     
@@ -26,7 +28,7 @@ struct ContentView: View {
             _numberRange = State(initialValue: 5...12) // Adjusted range for Medium
         case .hard:
             _numOfInputs = State(initialValue: 5)
-            _numberRange = State(initialValue: 5...20) // Adjusted range for Hard
+            _numberRange = State(initialValue: 7...15) // Adjusted range for Hard
         }
         _userInputs = State(initialValue: Array(repeating: nil, count: _numOfInputs.wrappedValue))
         _game = State(initialValue: MathGame(numberOfNumbers: _numOfInputs.wrappedValue, range: _numberRange.wrappedValue))
@@ -35,7 +37,7 @@ struct ContentView: View {
     var body: some View {
 
         ZStack {
-            Color.black.edgesIgnoringSafeArea(.all) // 🔹 Black background
+            (settings.isDarkMode ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
             /*FloatingSymbolView()
                 .zIndex(-1) It's a bit distracting on the game play page*/
                 .navigationBarBackButtonHidden(true) // This hides the default back button
@@ -63,46 +65,46 @@ struct ContentView: View {
                 }
                 .padding(.top, 10)
                 
-
-            
-            VStack(spacing: 20) {
                 
-                // Target number moved above the equation
-                Text("Target: \(game.targetNumber)")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .foregroundColor(.blue)
-                    .padding(.bottom, 10) // Add spacing below target number
                 
-                // Display blanks and operations
-                HStack(spacing: 10) {
-                    ForEach(0..<numOfInputs, id: \.self) { index in
-                        if let userNumber = userInputs[index] {
-                            Button(action: {
-                                removeNumber(at: index)
-                            }) {
-                                Text("\(userNumber)")
-                                    .frame(width: 50, height: 50)
-                                    .background(Color.gray.opacity(0.2))
+                VStack(spacing: 20) {
+                    
+                    // Target number moved above the equation
+                    Text("Target: \(game.targetNumber)")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(.blue)
+                        .padding(.bottom, 10) // Add spacing below target number
+                    
+                    // Display blanks and operations
+                    HStack(spacing: 10) {
+                        ForEach(0..<numOfInputs, id: \.self) { index in
+                            if let userNumber = userInputs[index] {
+                                Button(action: {
+                                    removeNumber(at: index)
+                                }) {
+                                    Text("\(userNumber)")
+                                        .frame(width: 50, height: 50)
+                                        .background(Color.gray.opacity(0.2))
+                                        .cornerRadius(5)
+                                }
+                            } else {
+                                Text(" ")
+                                    .frame(width: 45, height: 45)
+                                    .background(Color.gray.opacity(0.6))
                                     .cornerRadius(5)
                             }
-                        } else {
-                            Text(" ")
-                                .frame(width: 45, height: 45)
-                                .background(Color.gray.opacity(0.6))
-                                .cornerRadius(5)
-                        }
-                        
-                        if index < numOfInputs - 1 {
-                            //update the text size for hard mode to be slightly smaller otherwise they don't fit
-                            Text(game.operations[index])
-                                .font(difficulty == .hard ? .headline : .title)
-                                .foregroundColor(.white) // Make operations blue for visibility
+                            
+                            if index < numOfInputs - 1 {
+                                //update the text size for hard mode to be slightly smaller otherwise they don't fit
+                                Text(game.operations[index])
+                                    .font(difficulty == .hard ? .headline : .title)
+                                    .foregroundColor(.blue) // Make operations blue for visibility in both light and dark mode
                                 
+                            }
                         }
                     }
                 }
-            }
                 
                 // Number buttons
                 HStack(spacing: 15) {
@@ -141,8 +143,8 @@ struct ContentView: View {
                                 .frame(width: 30, height: 30) // Smaller size
                                 .foregroundColor(.red) // Red for reset action
                         }
-
-
+                        
+                        
                     }
                 }
                 
@@ -157,7 +159,7 @@ struct ContentView: View {
                 }
                 
                 Text(message)
-                    .foregroundColor(.red)
+                    .foregroundColor(showNextButton ? .green : .red)
             }
             .padding()
         
@@ -178,9 +180,13 @@ struct ContentView: View {
     }
 
     private func removeNumber(at userIndex: Int) {
-        if let originalIndex = game.numbers.firstIndex(of: userInputs[userIndex]!) {
-            selectedIndices.removeAll { $0 == originalIndex }
+        guard let removedNumber = userInputs[userIndex] else { return }
+
+        // Find the specific index in selectedIndices that corresponds to the removed number
+        if let selectedIndex = selectedIndices.firstIndex(where: { game.numbers[$0] == removedNumber }) {
+            selectedIndices.remove(at: selectedIndex) // Remove only the corresponding selection
         }
+
         userInputs[userIndex] = nil
     }
 
