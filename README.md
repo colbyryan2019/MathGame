@@ -9,9 +9,9 @@ Mathematica is an interactive math-based puzzle game that challenges players to 
 - ⏪ **Reset & Undo** – Easily reset your choices or remove a number.  
 
 ## 📷 Screenshots  
-![Screenshot 1](Screenshots/SS1.png)  
-![Screenshot 2](Screenshots/SS2.png)  
-![Screenshot 3](Screenshots/SS3.png)
+![Screenshot 1](Screenshots/Simulator Screenshot - iPad Air 13-inch (M2) - 2025-03-11 at 19.20.22.png)  
+![Screenshot 2](Screenshots/Simulator Screenshot - iPad Air 13-inch (M2) - 2025-03-11 at 19.20.27.png)  
+![Screenshot 3](Screenshots/Simulator Screenshot - iPad Air 13-inch (M2) - 2025-03-11 at 19.20.40.png)
 
 ## 🛠️ Installation  
 Visit the Apple App Store on your iOS Device.
