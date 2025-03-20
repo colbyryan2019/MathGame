@@ -12,6 +12,7 @@ enum Difficulty: String, Codable, CaseIterable {
 struct Score: Codable {
     var wins: Int
     var losses: Int
+    var currentWinStreak: Int
 }
 
 class ScoreTracker: ObservableObject {
@@ -29,14 +30,24 @@ class ScoreTracker: ObservableObject {
         return scores[difficulty]?.losses ?? 0
     }
     
+    func getWinStreak(for difficulty: Difficulty) -> Int {
+        return scores[difficulty]?.currentWinStreak ?? 0
+    }
+    
     func addWin(for difficulty: Difficulty) {
-        scores[difficulty, default: Score(wins: 0, losses: 0)].wins += 1
+        var score = scores[difficulty, default: Score(wins: 0, losses: 0, currentWinStreak: 0)]
+        score.wins += 1
+        score.currentWinStreak += 1 // increment streak
+        scores[difficulty] = score
         saveScores()
         objectWillChange.send()
     }
     
     func addLoss(for difficulty: Difficulty) {
-        scores[difficulty, default: Score(wins: 0, losses: 0)].losses += 1
+        var score = scores[difficulty, default: Score(wins: 0, losses: 0, currentWinStreak: 0)]
+        score.losses += 1
+        score.currentWinStreak = 0 // reset streak
+        scores[difficulty] = score
         saveScores()
         objectWillChange.send()
     }

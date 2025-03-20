@@ -12,18 +12,18 @@ struct MathGame {
     var operations: [String]
     var numbers: [Int]
     
-    init(numberOfNumbers: Int = 3, range: ClosedRange<Int> = 2...12) {
-        // Generate numbers and operations
+    init(numberOfNumbers: Int = 3, range: ClosedRange<Int> = 2...12, difficulty: Difficulty = .medium) {
         targetNumber = -1
+        
         repeat {
             numbers = (1...numberOfNumbers).map { _ in Int.random(in: range) }
             
-            // Generate operations randomly (numberOfNumbers - 1 operations)
-            operations = (1...(numberOfNumbers - 1)).map { _ in
-                ["+", "-", "*"].randomElement()!
-            }
+            repeat {
+                operations = (1...(numberOfNumbers - 1)).map { _ in
+                    ["+", "-", "*"].randomElement()!
+                }
+            } while allSameOperators() || tooManyMultiplications(for: difficulty)
             
-            // Generate a target number based on the operations and numbers
             targetNumber = MathGame.calculateTargetWithOrder(numbers: numbers, operations: operations)
             numbers.shuffle()
         } while(targetNumber < 0)
@@ -32,7 +32,19 @@ struct MathGame {
         print("target number:", targetNumber)
         print("numbers=", numbers)
         print("operations: ", operations)
-        
+    }
+
+    private func allSameOperators() -> Bool {
+        guard let first = operations.first else { return false }
+        return operations.allSatisfy { $0 == first }
+    }
+
+    private func tooManyMultiplications(for difficulty: Difficulty) -> Bool {
+        let multiplicationCount = operations.filter { $0 == "*" }.count
+        if difficulty == .hard {
+            return multiplicationCount > 2
+        }
+        return false
     }
     
     // Function to calculate target with left-to-right operations (basic mode)

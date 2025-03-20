@@ -35,135 +35,142 @@ struct ContentView: View {
     }
 
     var body: some View {
-
         ZStack {
             (settings.isDarkMode ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
-            /*FloatingSymbolView()
-                .zIndex(-1) It's a bit distracting on the game play page*/
-                .navigationBarBackButtonHidden(true) // This hides the default back button
-                .navigationBarItems(leading: Button(action: {
-                    // Custom back action: Dismiss the current view (navigate back)
-                    self.presentationMode.wrappedValue.dismiss()
-                }) {
-                    Image(systemName: "arrow.left.circle.fill")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.blue)
-                })
             
             VStack {
-                HStack {
-                    Text("\(score.getWins(for: difficulty))")
-                        .font(.headline)
-                        .foregroundColor(.green)
-                        .padding(.leading)
-                    Spacer()
-                    Text("\(score.getLosses(for: difficulty))")
-                        .font(.headline)
-                        .foregroundColor(.red)
-                        .padding(.trailing)
-                }
-                .padding(.top, 10)
-                
-                
-                
-                VStack(spacing: 20) {
-                    
-                    // Target number moved above the equation
-                    Text("Target: \(game.targetNumber)")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .foregroundColor(.blue)
-                        .padding(.bottom, 10) // Add spacing below target number
-                    
-                    // Display blanks and operations
-                    HStack(spacing: 10) {
-                        ForEach(0..<numOfInputs, id: \.self) { index in
-                            if let userNumber = userInputs[index] {
+
+
+                VStack {
+
+                    VStack {
+                        if(settings.trackWins){
+                            HStack {
+                                Text("\(score.getWins(for: difficulty))")
+                                    .font(.headline)
+                                    .foregroundColor(.green)
+                                    .padding(.leading)
+                                Spacer()
+                                Text("\(score.getLosses(for: difficulty))")
+                                    .font(.headline)
+                                    .foregroundColor(.red)
+                                    .padding(.trailing)
+                            }
+                            .padding(.top, 10)
+                        }
+                        
+                        
+                        
+                        VStack(spacing: 20) {
+                            
+                            // Target number moved above the equation
+                            Text("Target: \(game.targetNumber)")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .foregroundColor(.blue)
+                                .padding(.bottom, 10) // Add spacing below target number
+                            
+                            // Display blanks and operations
+                            HStack(spacing: 10) {
+                                ForEach(0..<numOfInputs, id: \.self) { index in
+                                    if let userNumber = userInputs[index] {
+                                        Button(action: {
+                                            removeNumber(at: index)
+                                        }) {
+                                            Text("\(userNumber)")
+                                                .frame(width: 50, height: 50)
+                                                .background(Color.gray.opacity(0.2))
+                                                .cornerRadius(5)
+                                        }
+                                    } else {
+                                        Text(" ")
+                                            .frame(width: 45, height: 45)
+                                            .background(Color.gray.opacity(0.6))
+                                            .cornerRadius(5)
+                                    }
+                                    
+                                    if index < numOfInputs - 1 {
+                                        //update the text size for hard mode to be slightly smaller otherwise they don't fit
+                                        Text(game.operations[index])
+                                            .font(difficulty == .hard ? .headline : .title)
+                                            .foregroundColor(.blue) // Make operations blue for visibility in both light and dark mode
+                                        
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Number buttons
+                        HStack(spacing: 15) {
+                            ForEach(game.numbers.indices, id: \.self) { index in
+                                let number = game.numbers[index]
                                 Button(action: {
-                                    removeNumber(at: index)
+                                    addNumber(number, at: index)
                                 }) {
-                                    Text("\(userNumber)")
+                                    Text("\(number)")
                                         .frame(width: 50, height: 50)
-                                        .background(Color.gray.opacity(0.2))
+                                        .background(selectedIndices.contains(index) ? Color.green : Color.blue.opacity(0.7))
+                                        .foregroundColor(.white)
                                         .cornerRadius(5)
                                 }
-                            } else {
-                                Text(" ")
-                                    .frame(width: 45, height: 45)
-                                    .background(Color.gray.opacity(0.6))
-                                    .cornerRadius(5)
+                                .disabled(!canSelect(number, at: index))
                             }
+                        }
+                        
+                        if !showNextButton {
                             
-                            if index < numOfInputs - 1 {
-                                //update the text size for hard mode to be slightly smaller otherwise they don't fit
-                                Text(game.operations[index])
-                                    .font(difficulty == .hard ? .headline : .title)
-                                    .foregroundColor(.blue) // Make operations blue for visibility in both light and dark mode
+                            HStack(spacing: 20) {
+                                //  Check Button
+                                Button(action: checkAnswer) {
+                                    Text("Check")
+                                        .padding()
+                                        .background(Color.green)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(8)
+                                }
+                                
+                                //  Reset Button
+                                
+                                Button(action: resetGame) {
+                                    Image(systemName: "arrow.uturn.left") // Reset icon
+                                        .resizable()
+                                        .frame(width: 30, height: 30) // Smaller size
+                                        .foregroundColor(.red) // Red for reset action
+                                }
+                                
                                 
                             }
                         }
-                    }
-                }
-                
-                // Number buttons
-                HStack(spacing: 15) {
-                    ForEach(game.numbers.indices, id: \.self) { index in
-                        let number = game.numbers[index]
-                        Button(action: {
-                            addNumber(number, at: index)
-                        }) {
-                            Text("\(number)")
-                                .frame(width: 50, height: 50)
-                                .background(selectedIndices.contains(index) ? Color.green : Color.blue.opacity(0.7))
-                                .foregroundColor(.white)
-                                .cornerRadius(5)
-                        }
-                        .disabled(!canSelect(number, at: index))
-                    }
-                }
-                
-                if !showNextButton {
-                    
-                    HStack(spacing: 20) {
-                        //  Check Button
-                        Button(action: checkAnswer) {
-                            Text("Check")
-                                .padding()
-                                .background(Color.green)
-                                .foregroundColor(.white)
-                                .cornerRadius(8)
+                        
+                        if showNextButton {
+                            Button("Next Game") {
+                                nextGame()
+                            }
+                            .padding()
+                            .background(Color.orange)
+                            .cornerRadius(8)
+                            .foregroundColor(.white)
                         }
                         
-                        //  Reset Button
-                        
-                        Button(action: resetGame) {
-                            Image(systemName: "arrow.uturn.left") // Reset icon
-                                .resizable()
-                                .frame(width: 30, height: 30) // Smaller size
-                                .foregroundColor(.red) // Red for reset action
-                        }
-                        
-                        
+                        Text(message)
+                            .foregroundColor(showNextButton ? .green : .red)
                     }
                 }
-                
-                if showNextButton {
-                    Button("Next Game") {
-                        nextGame()
-                    }
-                    .padding()
-                    .background(Color.orange)
-                    .cornerRadius(8)
-                    .foregroundColor(.white)
+                .padding()
+                if(settings.trackWinstreaks){
+                    Text("Win Streak: \(score.getWinStreak(for: difficulty))")
+                        .foregroundColor(.blue)
                 }
-                
-                Text(message)
-                    .foregroundColor(showNextButton ? .green : .red)
             }
-            .padding()
-        
-        }
+        }.overlay(
+            Group {
+                if settings.showCelebration && showNextButton {
+                    FireworkParticleView()
+                        .transition(.opacity)
+                }
+            }
+        )
+
     }
 
     func resetGame() {
@@ -205,7 +212,9 @@ struct ContentView: View {
         if MathGame.calculateTargetWithOrder(numbers: userInputs.compactMap { $0 }, operations: game.operations) == game.targetNumber {
             score.addWin(for: difficulty)
             message = "Correct!"
-            showNextButton = true
+            withAnimation {
+                showNextButton = true
+            }
         } else {
             
                 score.addLoss(for: difficulty)

@@ -38,13 +38,25 @@ struct MenuView: View {
                                     .font(.headline)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                Text("\(score.getWins(for: difficulty))")
-                                    .foregroundColor(.green)
-                                    .bold()
+                                if settings.trackWins {
+                                    Text("\(score.getWins(for: difficulty))")
+                                        .foregroundColor(.green)
+                                        .bold()
+                                }
                                 
-                                Text("\(score.getLosses(for: difficulty))")
-                                    .foregroundColor(.red)
-                                    .bold()
+                                if settings.trackWinstreaks {
+                                    
+                                    Text("(\(score.getWinStreak(for: difficulty)))")
+                                        .foregroundColor(.white)
+                                        .font(.caption)
+                                }
+                                
+                                if settings.trackWins {
+                                    
+                                    Text("\(score.getLosses(for: difficulty))")
+                                        .foregroundColor(.red)
+                                        .bold()
+                                }
                             }
                             .padding()
                             .frame(width: 250, height: 50) // Set a fixed width & height
