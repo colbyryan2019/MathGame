@@ -9,7 +9,7 @@ Mathematica is an interactive math-based puzzle game that challenges players to 
 - ⏪ **Reset & Undo** – Easily reset your choices or remove a number.
 
 ## Releases
-# Version 1.1
+### Version 1.1
 (March 20th, 2025)
 - Added Winstreak Counter for Each Version
 - Added Unique, Firework Celebration After Each Solved Puzzle
