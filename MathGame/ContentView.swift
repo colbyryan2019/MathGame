@@ -39,10 +39,7 @@ struct ContentView: View {
             (settings.isDarkMode ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
             
             VStack {
-
-
                 VStack {
-
                     VStack {
                         if(settings.trackWins){
                             HStack {
@@ -58,8 +55,6 @@ struct ContentView: View {
                             }
                             .padding(.top, 10)
                         }
-                        
-                        
                         
                         VStack(spacing: 20) {
                             

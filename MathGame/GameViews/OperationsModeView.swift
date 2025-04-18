@@ -6,9 +6,10 @@
 //
 
 // OperationsModeView.swift
+import SwiftUI
 struct OperationsModeView: View {
     let difficulty: Difficulty
-    @State private var score: ScoreTracker
+    @State var score: ScoreTracker
 
     var body: some View {
         Text("Operations mode coming soon...")

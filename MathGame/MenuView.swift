@@ -134,7 +134,10 @@ struct DifficultySelectionView: View {
     var body: some View {
         VStack(spacing: 15) {
             ForEach(Difficulty.allCases, id: \.self) { difficulty in
-                Button(action: { selectedDifficulty = difficulty }) {
+                Button(action: {
+                    selectedDifficulty = difficulty
+                    navigateToGame = true
+                }) {
                     difficultyRow(for: difficulty)
                 }
                 .background(Color.gray.opacity(0.5)) // Remove the selection color
@@ -143,14 +146,13 @@ struct DifficultySelectionView: View {
             }
         }
         
-        .navigationLink(isActive: $navigateToGame) {
-            ContentView(
-                score: score,
-                difficulty: selectedDifficulty,
-                gameMode: selectedTab,
-                timeLimit: selectedTimeMode
-            )
-        }
+        NavigationLink(
+            destination: destinationView(),
+            isActive: $navigateToGame,
+            label: { EmptyView() }
+        )
+        .hidden()
+
         
 
         if selectedTab == .timed {
@@ -196,6 +198,22 @@ struct DifficultySelectionView: View {
                 }
                 .buttonStyle(PlainButtonStyle()) // Ensures clean button look
             }
+        }
+    }
+
+    @ViewBuilder
+    private func destinationView() -> some View {
+        switch selectedTab {
+        case .standard:
+            StandardModeView(difficulty: selectedDifficulty, score: score)
+                .environmentObject(settings)
+        case .timed:
+            TimedModeView(difficulty: selectedDifficulty, score: score, timeLimit: selectedTimeMode)
+                .environmentObject(settings)
+        case .operations:
+            OperationsModeView(difficulty: selectedDifficulty, score: score)
+                .environmentObject(settings)
+
         }
     }
 }
