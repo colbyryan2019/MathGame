@@ -56,7 +56,7 @@ struct MenuView: View {
                         DifficultySelectionView(score: score, selectedTab: selectedTab) // Now identical to other modes
                     }
                 }
-                .frame(height: 200)
+                .frame(height: 260)
 
                 Spacer()
 
@@ -70,6 +70,7 @@ struct MenuView: View {
                 }
                 .padding(.bottom, 10)
             }
+            .animation(.easeInOut, value: selectedTab)            
             .navigationBarItems(trailing: Button(action: {
                 showSettings.toggle()
             }) {
@@ -140,26 +141,28 @@ struct DifficultySelectionView: View {
                 }) {
                     difficultyRow(for: difficulty)
                 }
-                .background(Color.gray.opacity(0.5)) // Remove the selection color
-                .cornerRadius(12) // Ensures proper button styling
-                .buttonStyle(PlainButtonStyle()) // Prevents default button styling
+                .background(Color.gray.opacity(0.5))
+                .cornerRadius(12)
+                .buttonStyle(PlainButtonStyle())
+            }
+
+            // Spacer or time buttons go here
+            if selectedTab == .timed {
+                timeSelectionButtons()
+            } else {
+                // Add an empty space of equivalent height to preserve layout
+                Spacer().frame(height: 50)
             }
         }
-        
+
         NavigationLink(
             destination: destinationView(),
             isActive: $navigateToGame,
             label: { EmptyView() }
         )
         .hidden()
-
-        
-
-        if selectedTab == .timed {
-            timeSelectionButtons()
-        }
     }
-
+    
     private func difficultyRow(for difficulty: Difficulty) -> some View {
         HStack {
             Text(difficulty.rawValue.capitalized)
@@ -167,23 +170,24 @@ struct DifficultySelectionView: View {
                 .foregroundColor(.white)
 
             if selectedTab == .standard {
-                Text("\(score.getWins(for: difficulty))")
+                Text("\(score.getWins(for: .standard, difficulty: difficulty))")
                     .foregroundColor(.green)
-                    .bold()
-                Text("\(score.getLosses(for: difficulty))")
+                Text("\(score.getLosses(for: .standard, difficulty: difficulty))")
                     .foregroundColor(.red)
-                    .bold()
-            } else if selectedTab == .timed {
-                Text("TODO")
+            } else if selectedTab == .operations {
+                Text("\(score.getWins(for: .operations, difficulty: difficulty))")
                     .foregroundColor(.green)
-            }else if selectedTab == .operations {
-                Text("Wins/Losses?")
-                    .foregroundStyle(.green)
+                Text("\(score.getLosses(for: .operations, difficulty: difficulty))")
+                    .foregroundColor(.red)
+            } else if selectedTab == .timed {
+                Text("Best: \(score.getBestScore(for: difficulty, timeLimit: selectedTimeMode))")
+                    .foregroundColor(.cyan)
             }
         }
         .padding()
         .frame(width: 300)
     }
+
 
     private func timeSelectionButtons() -> some View {
         HStack {

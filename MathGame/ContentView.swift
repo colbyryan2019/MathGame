@@ -43,12 +43,12 @@ struct ContentView: View {
                     VStack {
                         if(settings.trackWins){
                             HStack {
-                                Text("\(score.getWins(for: difficulty))")
+                                Text("\(score.getWins(for: .standard, difficulty: difficulty))")
                                     .font(.headline)
                                     .foregroundColor(.green)
                                     .padding(.leading)
                                 Spacer()
-                                Text("\(score.getLosses(for: difficulty))")
+                                Text("\(score.getLosses(for: .standard, difficulty: difficulty))")
                                     .font(.headline)
                                     .foregroundColor(.red)
                                     .padding(.trailing)
@@ -153,7 +153,7 @@ struct ContentView: View {
                 }
                 .padding()
                 if(settings.trackWinstreaks){
-                    Text("Win Streak: \(score.getWinStreak(for: difficulty))")
+                    Text("Win Streak: \(score.getWinStreak(for: .standard, difficulty: difficulty))")
                         .foregroundColor(.blue)
                 }
             }
@@ -205,14 +205,14 @@ struct ContentView: View {
         }
 
         if MathGame.calculateTargetWithOrder(numbers: userInputs.compactMap { $0 }, operations: game.operations) == game.targetNumber {
-            score.addWin(for: difficulty)
+            score.addWin(for: .standard, difficulty: difficulty)
             message = "Correct!"
             withAnimation {
                 showNextButton = true
             }
         } else {
             
-            score.addLoss(for: difficulty)
+            score.addLoss(for: .standard, difficulty: difficulty)
             message = "Try again!"
             resetTiles()
         }
