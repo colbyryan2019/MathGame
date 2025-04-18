@@ -3,6 +3,7 @@
 //  MathGame
 //
 //  Created by Colby Ryan on 3/5/25.
+
 import Foundation
 
 enum Difficulty: String, Codable, CaseIterable {

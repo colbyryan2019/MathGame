@@ -217,7 +217,7 @@ struct ContentView: View {
             }
         } else {
             
-                score.addLoss(for: difficulty)
+            score.addLoss(for: difficulty)
             message = "Try again!"
             resetTiles()
         }
