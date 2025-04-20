@@ -11,9 +11,20 @@ struct TimedModeView: View {
     let difficulty: Difficulty
     @State var score: ScoreTracker
     let timeLimit: Int // Track selected time in timed mode
-
-
+    
+    
     var body: some View {
         Text("Timed mode coming soon... for limit:  \(timeLimit)")
     }
+    
+    /*
+    .onAppear {
+        timerManager.start {
+            // game over
+        }
+    }
+    
+    @StateObject var gameSession = GameSession(...)
+    @StateObject var timerManager = TimerManager(timeLimit: 60)
+    */
 }

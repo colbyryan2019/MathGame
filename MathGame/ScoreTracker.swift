@@ -96,11 +96,37 @@ class ScoreTracker: ObservableObject {
     }
 
     func loadScores() {
+        // Try to load from new format first
         if let saved = UserDefaults.standard.data(forKey: "ScoreTrackerDataV2"),
            let decoded = try? JSONDecoder().decode([GameType: [Difficulty: ModeScore]].self, from: saved) {
             self.scores = decoded
+            return
+        }
+
+        // Fallback: check if legacy data exists and migrate it
+        if let legacyData = UserDefaults.standard.data(forKey: "ScoreTrackerData"),
+           let legacyDecoded = try? JSONDecoder().decode([String: Score].self, from: legacyData) {
+            
+            var migratedScores: [GameType: [Difficulty: ModeScore]] = [:]
+            var standardScores: [Difficulty: ModeScore] = [:]
+
+            for (key, score) in legacyDecoded {
+                if let difficulty = Difficulty(rawValue: key) {
+                    let modeScore = ModeScore(wins: score.wins, losses: score.losses, currentWinStreak: score.currentWinStreak, timed: nil)
+                    standardScores[difficulty] = modeScore
+                }
+            }
+
+            migratedScores[.standard] = standardScores
+            self.scores = migratedScores
+
+            // Save migrated data under the new key
+            saveScores()
+            //Free up space and remove old scoretracker
+            UserDefaults.standard.removeObject(forKey: "ScoreTrackerData")
         }
     }
+
 
 }
 
