@@ -11,28 +11,32 @@ struct MathGame {
     var targetNumber: Int
     var operations: [String]
     var numbers: [Int]
+    let difficulty: Difficulty
+
     
-    init(numberOfNumbers: Int = 3, range: ClosedRange<Int> = 2...12, difficulty: Difficulty = .medium) {
+    init(difficulty: Difficulty = .medium) {
+        self.difficulty = difficulty
         targetNumber = -1
-        
+
         repeat {
-            numbers = (1...numberOfNumbers).map { _ in Int.random(in: range) }
-            
+            numbers = (1...difficulty.numberOfNumbers).map { _ in Int.random(in: difficulty.range) }
+
             repeat {
-                operations = (1...(numberOfNumbers - 1)).map { _ in
+                operations = (1...(difficulty.numberOfNumbers - 1)).map { _ in
                     ["+", "-", "*"].randomElement()!
                 }
             } while allSameOperators() || tooManyMultiplications(for: difficulty)
-            
+
             targetNumber = MathGame.calculateTargetWithOrder(numbers: numbers, operations: operations)
             numbers.shuffle()
         } while(targetNumber < 0)
-        
+
         print("gamelogic init")
         print("target number:", targetNumber)
         print("numbers=", numbers)
         print("operations: ", operations)
     }
+
 
     private func allSameOperators() -> Bool {
         guard let first = operations.first else { return false }

@@ -18,6 +18,7 @@ struct StandardModeView: View {
     }
 
     var body: some View {
-        ContentView(difficulty: difficulty, score: score)
+        let session = GameSession(scoreTracker: score, gameMode: standardMode, difficulty: difficulty)
+        GamePlayView(session: session)
     }
 }

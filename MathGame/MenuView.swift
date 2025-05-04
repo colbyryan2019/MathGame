@@ -140,10 +140,15 @@ struct DifficultySelectionView: View {
                     navigateToGame = true
                 }) {
                     difficultyRow(for: difficulty)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(12)
+                        .padding(.horizontal)
                 }
-                .background(Color.gray.opacity(0.5))
-                .cornerRadius(12)
                 .buttonStyle(PlainButtonStyle())
+
             }
 
             // Spacer or time buttons go here
@@ -164,28 +169,47 @@ struct DifficultySelectionView: View {
     }
     
     private func difficultyRow(for difficulty: Difficulty) -> some View {
-        HStack {
-            Text(difficulty.rawValue.capitalized)
-                .font(.headline)
-                .foregroundColor(.white)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text(difficulty.rawValue.capitalized)
+                    .font(.headline)
+                    .foregroundColor(.white)
 
-            if selectedTab == .standard {
-                Text("\(score.getWins(for: .standard, difficulty: difficulty))")
-                    .foregroundColor(.green)
-                Text("\(score.getLosses(for: .standard, difficulty: difficulty))")
-                    .foregroundColor(.red)
-            } else if selectedTab == .operations {
-                Text("\(score.getWins(for: .operations, difficulty: difficulty))")
-                    .foregroundColor(.green)
-                Text("\(score.getLosses(for: .operations, difficulty: difficulty))")
-                    .foregroundColor(.red)
-            } else if selectedTab == .timed {
-                Text("Best: \(score.getBestScore(for: difficulty, timeLimit: selectedTimeMode))")
-                    .foregroundColor(.cyan)
+                Spacer()
+
+                if selectedTab == .standard {
+                    if settings.trackWins{
+                        Text("\(score.getWins(for: .standard, difficulty: difficulty))")
+                            .foregroundColor(.green)
+                        Text("\(score.getLosses(for: .standard, difficulty: difficulty))")
+                            .foregroundColor(.red)
+                    }
+                    if settings.trackWinstreaks{
+                        Text("\(score.getWinStreak(for: .standard, difficulty: difficulty))")
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                    }
+
+                } else if selectedTab == .operations {
+                    if settings.trackWins{
+                        Text("\(score.getWins(for: .operations, difficulty: difficulty))")
+                            .foregroundColor(.green)
+                        Text("\(score.getLosses(for: .operations, difficulty: difficulty))")
+                            .foregroundColor(.red)
+                    }
+                    if settings.trackWinstreaks{
+                        Text("\(score.getWinStreak(for: .standard, difficulty: difficulty))")
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                    }
+                } else if selectedTab == .timed {
+                    Text("Best: \(score.getBestScore(for: difficulty, timeLimit: selectedTimeMode))")
+                        .foregroundColor(.cyan)
+                }
             }
         }
-        .padding()
-        .frame(width: 300)
+        .padding(.horizontal)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
 

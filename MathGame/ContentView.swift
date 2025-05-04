@@ -33,7 +33,7 @@ struct ContentView: View {
             _numberRange = State(initialValue: 7...15) // Adjusted range for Hard
         }
         _userInputs = State(initialValue: Array(repeating: nil, count: _numOfInputs.wrappedValue))
-        _game = State(initialValue: MathGame(numberOfNumbers: _numOfInputs.wrappedValue, range: _numberRange.wrappedValue))
+        _game = State(initialValue: MathGame(difficulty: difficulty))
     }
 
     var body: some View {
@@ -226,7 +226,7 @@ struct ContentView: View {
     }
 
     private func nextGame() {
-        game = MathGame(numberOfNumbers: numOfInputs, range: 2...12)
+        game = MathGame(difficulty: difficulty)
         userInputs = Array(repeating: nil, count: numOfInputs)
         selectedIndices = []
         message = ""

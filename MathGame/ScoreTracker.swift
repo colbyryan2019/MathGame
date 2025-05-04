@@ -9,6 +9,28 @@ import Foundation
 enum Difficulty: String, Codable, CaseIterable {
     case easy, medium, hard
 }
+extension Difficulty {
+    var range: ClosedRange<Int> {
+        switch self {
+        case .easy:
+            return 1...6
+        case .medium:
+            return 3...12
+        case .hard:
+            return 5...20
+        }
+    }
+    var numberOfNumbers: Int {
+        switch self {
+        case .easy:
+            return 3
+        case .medium:
+            return 4
+        case .hard:
+            return 5
+        }
+    }
+}
 
 enum GameType: String, Codable, CaseIterable {
     case standard, timed, operations

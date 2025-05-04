@@ -6,6 +6,8 @@
 //
 
 struct GameState {
-    var currentQuestion: GameQuestion
-    var userAnswer: Int
+    let currentQuestion: GameQuestion
+    let userAnswer: Int?               // Simple answer (if used)
+    let orderedAnswer: Int?           // Used for Standard/Timed mode
+    let operationAnswer: Int?         // Used for Operations mode
 }
