@@ -54,6 +54,7 @@ struct Score: Codable {
 }
 
 class ScoreTracker: ObservableObject {
+    static let shared = ScoreTracker()
     @Published private var scores: [GameType: [Difficulty: ModeScore]] = [:]
 
     init() {

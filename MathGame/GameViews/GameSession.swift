@@ -92,16 +92,20 @@ class GameSession: ObservableObject {
     }
 
     func submit() {
-        let state = GameState(
-            currentQuestion: currentQuestion,
-            userAnswer: userInputs.compactMap { $0 }.first, // Only used in simple answer types
-            orderedAnswer: MathGame.calculateTargetWithOrder(
-                numbers: userInputs.compactMap { $0 },
-                operations: currentQuestion.operations
-            ),
-            operationAnswer: currentQuestion.constructedEquation(from: userInputs.compactMap { $0 }) // hypothetical method
+        let ordered = MathGame.calculateTargetWithOrder(
+          numbers: userInputs.compactMap { $0 },
+          operations: currentQuestion.operations
         )
-
+        let correct = (ordered == currentQuestion.correctAnswer)
+        
+        let state = GameState(
+          currentQuestion: currentQuestion,
+          userAnswer: userInputs.compactMap { $0 }.first,
+          orderedAnswer: ordered,
+          operationAnswer: currentQuestion.constructedEquation(from: userInputs.compactMap { $0 }),
+          lastAnswerWasCorrect: correct    // ← set here
+        )
+        
         if gameMode.winCondition(state) {
             scoreTracker.addWin(for: gameMode.gameType, difficulty: difficulty)
             message = "Correct!"
@@ -114,6 +118,7 @@ class GameSession: ObservableObject {
             reset()
         }
     }
+
 
     func next() {
         currentQuestion = GameQuestion.generate(for: difficulty)

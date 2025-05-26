@@ -10,4 +10,6 @@ struct GameState {
     let userAnswer: Int?               // Simple answer (if used)
     let orderedAnswer: Int?           // Used for Standard/Timed mode
     let operationAnswer: Int?         // Used for Operations mode
+    var lastAnswerWasCorrect: Bool = false
+
 }

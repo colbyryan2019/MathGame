@@ -5,11 +5,25 @@ struct GamePlayView: View {
     @EnvironmentObject var settings: AppSettings
     @Environment(\.presentationMode) var presentationMode
     
+    var timeLimit: Int? = nil
+    //Track time if necessary
+    @State private var timeRemaining: Int = 0
+    @State private var timerActive = false
+    
     var body: some View {
         ZStack {
             (settings.isDarkMode ? Color.black : Color.white).edgesIgnoringSafeArea(.all)
             
             VStack {
+                if let limit = timeLimit {
+                    Text("Time: \(timeRemaining)")
+                        .font(.title)
+                        .foregroundColor(timeRemaining <= 10 ? .red : .primary)
+                        .onAppear {
+                            timeRemaining = limit
+                            startTimer()
+                        }
+                }
                 if settings.trackWins {
                     HStack {
                         Text("\(session.scoreTracker.getWins(for: session.gameMode.gameType, difficulty: session.difficulty))")
@@ -134,4 +148,25 @@ struct GamePlayView: View {
             }
         )
     }
+    
+    func startTimer() {
+        timerActive = true
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            if timerActive {
+                timeRemaining -= 1
+                if timeRemaining <= 0 {
+                    timer.invalidate()
+                    timerActive = false
+                    session.message = "TIME'S UP!"
+                    session.scoreTracker.addLoss(for: session.gameMode.gameType, difficulty: session.difficulty)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        presentationMode.wrappedValue.dismiss()
+                    }
+                }
+            } else {
+                timer.invalidate()
+            }
+        }
+    }
+
 }

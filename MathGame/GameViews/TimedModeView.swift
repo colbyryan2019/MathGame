@@ -9,22 +9,19 @@ import SwiftUI
 
 struct TimedModeView: View {
     let difficulty: Difficulty
-    @State var score: ScoreTracker
-    let timeLimit: Int // Track selected time in timed mode
-    
-    
+    let timeLimit: Int // In seconds
+
     var body: some View {
-        Text("Timed mode coming soon... for limit:  \(timeLimit)")
+        GamePlayView(
+            session: GameSession(scoreTracker: ScoreTracker.shared, gameMode: GameModeConfig(
+                gameType: .timed,
+                winCondition: { gameState in
+                    // A round is "won" if the player got it correct
+                    return gameState.lastAnswerWasCorrect
+                },
+                timeLimit: timeLimit
+            ), difficulty: difficulty),
+            timeLimit: timeLimit
+        )
     }
-    
-    /*
-    .onAppear {
-        timerManager.start {
-            // game over
-        }
-    }
-    
-    @StateObject var gameSession = GameSession(...)
-    @StateObject var timerManager = TimerManager(timeLimit: 60)
-    */
 }
